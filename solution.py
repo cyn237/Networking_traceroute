@@ -51,9 +51,9 @@ def build_packet():
     # Append checksum to the header.
     myChecksum = checksum(header + data)
     if sys.platform == 'darwin':
-        myChecksum = socket.htons(myChecksum) & 0xffff
+        myChecksum = htons(myChecksum) & 0xffff
     else:
-        myChecksum = socket.htons(myChecksum)
+        myChecksum = htons(myChecksum)
     header = struct.pack("bbHHh", ICMP_ECHO_REQUEST, 0, myChecksum, myID, 1)
     # Don’t send the packet yet , just return the final packet in this function.
     #Fill in end
@@ -74,8 +74,8 @@ def get_route(hostname):
 
             #Fill in start
             # Make a raw socket named mySocket
-            icmp = socket.getprotobyname("icmp")
-            mySocket = socket.socket(socket.AF_INET, socket.SOCK_RAW, icmp)
+            icmp = getprotobyname("icmp")
+            mySocket = socket(socket.AF_INET, socket.SOCK_RAW, icmp)
             #Fill in end
 
             mySocket.setsockopt(IPPROTO_IP, IP_TTL, struct.pack('I', ttl))
@@ -110,11 +110,11 @@ def get_route(hostname):
                 #Fetch the icmp type from the IP packet
                 icmpHeaderContent = recvPacket[20:28]
                 type, code, checksum, packetID, sequence = struct.unpack("bbHHh", icmpHeaderContent)
-                printname = get_name_or_ip(addr[0])
+                
                 #Fill in end
                 try: #try to fetch the hostname
                     #Fill in start
-                    host = socket.gethostbyaddr(destAddr)
+                    host = gethostbyaddr(destAddr)
                     nameorip = nameorip = '{0} ({1})'.format(hostip, host[0])
                     tracelist1.append(nameorip)
                     #Fill in end
